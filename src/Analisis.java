@@ -1,4 +1,5 @@
 package src;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -40,25 +41,25 @@ public class Analisis{
 
     private static String  analisiArray(String[] arrayN, String[] arrayK){
         
-        LinkedHashMap<Integer,String> hashHallazgos = new LinkedHashMap<Integer,String>();
-        LinkedHashMap<Integer, String> hashCheck = new LinkedHashMap<Integer, String>();
-        LinkedHashMap<String,Integer> hashKRepeticiones = new LinkedHashMap<String,Integer>();
-        LinkedHashMap<String,Integer> auxiliarRepeticiones = new LinkedHashMap<String,Integer>();
-        int contadorCoincidencia=0;
+        LinkedHashMap<Integer,String> hashCoincidencias = new LinkedHashMap<Integer,String>(); 
+        LinkedHashMap<Integer, String> hashAuxiliarCoincidencias = new LinkedHashMap<Integer, String>();
+        LinkedHashMap<String,Integer> hashConteoPorCaracter = new LinkedHashMap<String,Integer>();
+        LinkedHashMap<String,Integer> auxConteoPorCaracter = new LinkedHashMap<String,Integer>();
+        int contadorCaracter=0;
 
         for(int i=0; i<arrayN.length; i++){
-           contadorCoincidencia=0;
+            contadorCaracter=0;
             for(int j=0; j<arrayK.length; j++){
                     if(arrayN[i].equals(arrayK[j])){
-                            hashKRepeticiones.put(arrayK[j],++contadorCoincidencia);
-                            hashHallazgos.put(i,arrayN[i]);
+                            hashConteoPorCaracter.put(arrayK[j],++contadorCaracter);
+                            hashCoincidencias.put(i,arrayN[i]);
                          
                     }
             }
         }
-        hashCheck = hashHallazgos;
-        auxiliarRepeticiones = new LinkedHashMap<>(hashKRepeticiones);
-        ArrayList<Integer> arrayHallazgos = new ArrayList<Integer>();
+        hashAuxiliarCoincidencias = hashCoincidencias;
+        auxConteoPorCaracter = new LinkedHashMap<>(hashConteoPorCaracter);
+        ArrayList<Integer> arrayResultado = new ArrayList<Integer>();
 
         Integer repeticiones=0;
         Integer numeromaxcaracteres= arrayK.length;
@@ -66,9 +67,9 @@ public class Analisis{
 
         while(!terminado){
 
-            for(Entry<Integer, String>   e:hashHallazgos.entrySet()){
+            for(Entry<Integer, String>   e:hashCoincidencias.entrySet()){
             
-                repeticiones = auxiliarRepeticiones.get(e.getValue());
+                repeticiones = auxConteoPorCaracter.get(e.getValue());
                 if(numeromaxcaracteres ==0){
                     terminado = true;
                         break;
@@ -77,34 +78,34 @@ public class Analisis{
                 if(repeticiones>0){
                     numeromaxcaracteres -=1;
                     repeticiones-=1;
-                    arrayHallazgos.add(e.getKey());
-                    auxiliarRepeticiones.put(e.getValue(), repeticiones);
+                    arrayResultado.add(e.getKey());
+                    auxConteoPorCaracter.put(e.getValue(), repeticiones);
                     
                 }else {
                 
                     if(numeromaxcaracteres>0){
-                        String primerElemento = hashHallazgos.get(arrayHallazgos.get(0));
+                        String primerElemento = hashCoincidencias.get(arrayResultado.get(0));
                         String elementoRepetido = e.getValue();
 
                         if(!primerElemento.equals(elementoRepetido)){
                                 continue;                    
                         }
                     
-                        hashCheck.remove(arrayHallazgos.get(0));
-                        auxiliarRepeticiones=new LinkedHashMap<>(hashKRepeticiones);
+                        hashAuxiliarCoincidencias.remove(arrayResultado.get(0));
+                        auxConteoPorCaracter=new LinkedHashMap<>(hashConteoPorCaracter);
                         numeromaxcaracteres=arrayK.length;
-                        arrayHallazgos.clear();
+                        arrayResultado.clear();
                         break;
                         
                     }
                 }
-                hashHallazgos=hashCheck;
+                hashCoincidencias=hashAuxiliarCoincidencias;
             }//For
         }//While
 
         String cadenaResultante="";
-        int desdeindice= arrayHallazgos.get(0);
-        int hastaindice=arrayHallazgos.get(arrayHallazgos.size()-1);
+        int desdeindice= arrayResultado.get(0);
+        int hastaindice=arrayResultado.get(arrayResultado.size()-1);
 
         for(int i=desdeindice;i<=hastaindice;i++) {
             cadenaResultante+=arrayN[i]+" | ";
